@@ -1,14 +1,22 @@
 # https://faker.readthedocs.io/en/latest/providers/faker.providers.person.html
-from random import choice
+from random import choice, uniform
+
+from django.contrib.gis.geos import Point
 
 from factory import (
     DjangoModelFactory, Faker, PostGenerationMethodCall,
     RelatedFactory, SubFactory,
 )
+from factory.fuzzy import BaseFuzzyAttribute
 
 from hosting.models import MR, MRS, PRONOUN_CHOICES
 
 from .constants import PERSON_LOCALES
+
+
+class FuzzyPoint(BaseFuzzyAttribute):
+    def fuzz(self):
+        return Point(uniform(-180.0, 180.0), uniform(-90.0, 90.0))
 
 
 class LocaleFaker(Faker):
@@ -65,3 +73,38 @@ class ProfileFactory(DjangoModelFactory):
     )
     birth_date = Faker("date_between", start_date="-100y", end_date="-18y")
     description = Faker("sentence")
+
+
+class PlaceFactory(DjangoModelFactory):
+    class Meta:
+        model = "hosting.Place"
+
+    owner = SubFactory("tests.factories.ProfileFactory")
+
+    address = Faker("street_address")
+    city = Faker("city")
+    closest_city = Faker("city")
+    postcode = Faker("postcode")
+    state_province = Faker("state")
+    country = Faker("country_code")
+    location = FuzzyPoint()
+    location_confidence = Faker("pyint")
+    max_guest = Faker("pyint")
+    max_night = Faker("pyint")
+    contact_before = Faker("pyint")
+    description = Faker("text")
+    short_description = Faker("bs")
+    available = True
+    in_book = True
+    tour_guide = True
+    have_a_drink = True
+    sporadic_presence = False
+
+
+    # conditions = models.ManyToManyField
+    # family_members = models.ManyToManyField
+    # family_members_visibility = models.OneToOneField
+    blocked_from = None
+    blocked_until = None
+    # authorized_users = models.ManyToManyField
+    # visibility = models.OneToOneField

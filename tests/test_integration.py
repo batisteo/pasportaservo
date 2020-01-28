@@ -2,7 +2,7 @@ from django.urls import reverse
 
 from django_webtest import WebTest
 
-from .factories import ProfileFactory, UserFactory
+from .factories import ProfileFactory, UserFactory, PlaceFactory
 
 
 class HomeTests(WebTest):
@@ -40,3 +40,8 @@ class BasicProfileTests(WebTest):
         self.assertEqual(response.location, profile.get_edit_url())
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.follow().status_code, 200)
+
+
+class ProfileTests(WebTest):
+    def test_simple(self):
+        print(PlaceFactory())
