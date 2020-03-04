@@ -1,0 +1,14 @@
+name: Continuous Integration
+on: [pull_request]
+
+jobs:
+  black:
+    runs-on: ubuntu-latest
+    name: Black
+    steps:
+    - uses: actions/checkout@v1
+    - name: Black Code Formatter
+      uses: lgeiger/black-action@v1.0.1
+      id: black
+      with:
+        args: ". --check"
